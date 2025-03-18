@@ -1,0 +1,42 @@
+# Node modules (frontend & backend)
+node_modules/
+farmx-frontend/node_modules/
+farmx-backend/node_modules/
+
+# Build output (frontend)
+farmx-frontend/dist/
+
+# Logs (backend)
+farmx-backend/logs/
+farmx-backend/npm-debug.log*
+farmx-backend/yarn-debug.log*
+farmx-backend/yarn-error.log*
+
+# Environment variables (frontend & backend)
+farmx-frontend/.env
+farmx-backend/.env
+
+# Database files (if any)
+farmx-backend/*.sqlite
+farmx-backend/*.sqlite-journal
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Debugging
+farmx-backend/debug.log
+farmx-backend/.eslintcache
+farmx-frontend/.eslintcache
+
+# Uploads (if users upload files)
+farmx-backend/uploads/
+
+# Vite cache (frontend)
+farmx-frontend/.vite/
+farmx-frontend/.cache/
