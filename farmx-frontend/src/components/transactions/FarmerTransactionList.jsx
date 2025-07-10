@@ -12,6 +12,7 @@ import {
 import { Menu } from "@headlessui/react";
 import MerchantTransactionForm from "./MerchantTransactionForm";
 import FarmerTransactionPrint from "./FarmerTransactionPrint";
+import { calculateTotals } from "../../utils/transactionCalculations";
 
 const FarmerTransactionList = () => {
   const [transactions, setTransactions] = useState([]);
@@ -33,39 +34,22 @@ const FarmerTransactionList = () => {
   const [transactionToRemoveMerchant, setTransactionToRemoveMerchant] = useState(null);
 
   // Added for village filter
-  const [villageFilter, setVillageFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
 
-  // Extract unique villages (format: 1-pune, 3-mumbai)
-  const uniqueVillages = Array.from(
+  // Extract unique cities/localities from addresses for filter
+  const extractCity = (address) => {
+    if (!address) return "";
+    // Try to get last part after comma, or whole string if no comma
+    const parts = address.split(',').map(s => s.trim());
+    return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+  };
+  const uniqueCities = Array.from(
     new Set(
       transactions
-        .map((t) => t.vendor?.address)
-        .filter((v) => v && typeof v === "string")
+        .map((t) => extractCity(t.vendor?.address))
+        .filter(Boolean)
     )
-  ).map((village) => {
-    const [id, ...nameParts] = village.split("-");
-    return { id: id.trim(), name: nameParts.join("-").trim(), raw: village };
-  });
-
-  // const [transactions, setTransactions] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [showForm, setShowForm] = useState(false);
-  // const [selectedTransaction, setSelectedTransaction] = useState(null);
-  // const [showFilters, setShowFilters] = useState(false);
-  // const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  // const [transactionToDelete, setTransactionToDelete] = useState(null);
-  // const [dateFilter, setDateFilter] = useState({
-  //   start_date: new Date().toISOString().split("T")[0],
-  //   end_date: new Date().toISOString().split("T")[0],
-  // });
-  // const [showMerchantForm, setShowMerchantForm] = useState(false);
-  // const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] =
-  //   useState(null);
-  // const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] =
-  //   useState(false);
-
+  );
 
   const fetchTransactions = async () => {
     try {
@@ -94,13 +78,16 @@ const FarmerTransactionList = () => {
         .includes(searchQuery.toLowerCase()) ||
       transaction.amount?.toString().includes(searchQuery);
 
-    // Village filter logic
-    const matchesVillage =
-      !villageFilter ||
-      (transaction.vendor?.address && transaction.vendor.address.startsWith(villageFilter + "-"));
+    // City filter logic
+    const matchesCity =
+      !cityFilter ||
+      (transaction.vendor?.address && extractCity(transaction.vendor.address) === cityFilter);
 
-    return matchesSearch && matchesVillage;
+    return matchesSearch && matchesCity;
   });
+
+  // Calculate totals for the filtered transactions
+  const totals = calculateTotals(filteredTransactions);
 
   console.log(filteredTransactions);
 
@@ -231,15 +218,15 @@ const FarmerTransactionList = () => {
           </div>
           {/* Village Filter Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">गाव</label>
+            <label className="block text-sm font-medium text-gray-700">शहर/पत्ता</label>
             <select
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              value={villageFilter}
-              onChange={e => setVillageFilter(e.target.value)}
+              value={cityFilter}
+              onChange={e => setCityFilter(e.target.value)}
             >
-              <option value="">सर्व गावे</option>
-              {uniqueVillages.map(v => (
-                <option key={v.id} value={v.id}>{v.id}-{v.name} </option>
+              <option value="">सर्व</option>
+              {uniqueCities.map(city => (
+                <option key={city} value={city}>{city}</option>
               ))}
             </select>
           </div>
