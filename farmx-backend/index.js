@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: ["https://farmxapp.netlify.app"], // Allow only your frontend
+  origin: ["http://13.50.137.242:3000"], // Allow only your frontend
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // Allow cookies if needed
   allowedHeaders: ["Content-Type", "Authorization"],
