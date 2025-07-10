@@ -28,12 +28,44 @@ const FarmerTransactionList = () => {
     end_date: new Date().toISOString().split("T")[0],
   });
   const [showMerchantForm, setShowMerchantForm] = useState(false);
-  const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] =
-    useState(null);
-  const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] =
-    useState(false);
-  const [transactionToRemoveMerchant, setTransactionToRemoveMerchant] =
-    useState(null);
+  const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] = useState(null);
+  const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] = useState(false);
+  const [transactionToRemoveMerchant, setTransactionToRemoveMerchant] = useState(null);
+
+  // Added for village filter
+  const [villageFilter, setVillageFilter] = useState("");
+
+  // Extract unique villages (format: 1-pune, 3-mumbai)
+  const uniqueVillages = Array.from(
+    new Set(
+      transactions
+        .map((t) => t.vendor?.address)
+        .filter((v) => v && typeof v === "string")
+    )
+  ).map((village) => {
+    const [id, ...nameParts] = village.split("-");
+    return { id: id.trim(), name: nameParts.join("-").trim(), raw: village };
+  });
+
+  // const [transactions, setTransactions] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [showForm, setShowForm] = useState(false);
+  // const [selectedTransaction, setSelectedTransaction] = useState(null);
+  // const [showFilters, setShowFilters] = useState(false);
+  // const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  // const [transactionToDelete, setTransactionToDelete] = useState(null);
+  // const [dateFilter, setDateFilter] = useState({
+  //   start_date: new Date().toISOString().split("T")[0],
+  //   end_date: new Date().toISOString().split("T")[0],
+  // });
+  // const [showMerchantForm, setShowMerchantForm] = useState(false);
+  // const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] =
+  //   useState(null);
+  // const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] =
+  //   useState(false);
+
 
   const fetchTransactions = async () => {
     try {
@@ -62,8 +94,15 @@ const FarmerTransactionList = () => {
         .includes(searchQuery.toLowerCase()) ||
       transaction.amount?.toString().includes(searchQuery);
 
-    return matchesSearch;
+    // Village filter logic
+    const matchesVillage =
+      !villageFilter ||
+      (transaction.vendor?.address && transaction.vendor.address.startsWith(villageFilter + "-"));
+
+    return matchesSearch && matchesVillage;
   });
+
+  console.log(filteredTransactions);
 
   const handleFormClose = () => {
     setSelectedTransaction(null);
@@ -189,6 +228,20 @@ const FarmerTransactionList = () => {
               onChange={handleFilterChange}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
+          </div>
+          {/* Village Filter Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">गाव</label>
+            <select
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              value={villageFilter}
+              onChange={e => setVillageFilter(e.target.value)}
+            >
+              <option value="">सर्व गावे</option>
+              {uniqueVillages.map(v => (
+                <option key={v.id} value={v.id}>{v.id}-{v.name} </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

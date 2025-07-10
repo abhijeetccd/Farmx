@@ -42,6 +42,9 @@ const FarmerTransactionPrint = ({ transactions, dateFilter }) => {
           <h2>शेतकरी व्यवहार यादी</h2>
           <p>दिनांक: ${dateFilter.start_date} ते ${dateFilter.end_date}</p>
         </div>
+        <div style="font-weight: bold; margin-bottom: 8px;">
+          पत्ता: ${Array.from(new Set(transactions.map(t => t.vendor?.address).filter(Boolean))).join(', ')}
+        </div>
         <table>
           <thead>
             <tr>

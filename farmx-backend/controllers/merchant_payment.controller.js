@@ -103,7 +103,7 @@ exports.getByMerchant = async (req, res) => {
       payments,
       totals: {
         ...totals,
-        balance: totals.total_receivable - totals.total_received,
+        balance: totals.total_received - totals.total_receivable,
       },
     });
   } catch (error) {

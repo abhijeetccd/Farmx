@@ -8,10 +8,11 @@ dotenv.config();
 
 const app = express();
 
+const isProduction = process.env.NODE_ENV === "production";
 const corsOptions = {
-  origin: ["http://13.50.137.242:3000"], // Allow only your frontend
+  origin: isProduction ? ["http://13.50.137.242:3000"] : ["http://localhost:5173"], // Use prod IP or localhost
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Allow cookies if needed
+  credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
