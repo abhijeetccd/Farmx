@@ -193,7 +193,11 @@ const MerchantPaymentTracker = () => {
 
         <div className="bg-white shadow rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900">शिल्लक</h3>
-          <p className="mt-2 text-3xl font-bold text-red-600">
+          <p
+            className={`mt-2 text-3xl font-bold ${
+              paymentData.totals.balance < 0 ? "text-red-600" : "text-green-600"
+            }`}
+          >
             ₹{paymentData.totals.balance.toFixed(2)}
           </p>
         </div>
@@ -254,38 +258,6 @@ const MerchantPaymentTracker = () => {
                 <option value="जमा">जमा</option>
               </select>
             </div>
-
-            {/* <div>
-              <label className="block text-sm font-medium text-gray-700">
-                पेमेंट प्रकार
-              </label>
-              <select
-                value={newPayment.payment_mode}
-                onChange={(e) =>
-                  setNewPayment({ ...newPayment, payment_mode: e.target.value })
-                }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="cash">रोख</option>
-                <option value="cheque">धनादेश</option>
-                <option value="upi">UPI</option>
-                <option value="bank_transfer">बँक ट्रान्सफर</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                टीप
-              </label>
-              <input
-                type="text"
-                value={newPayment.remarks}
-                onChange={(e) =>
-                  setNewPayment({ ...newPayment, remarks: e.target.value })
-                }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div> */}
           </div>
 
           <div className="flex justify-end space-x-3">

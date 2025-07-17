@@ -8,8 +8,16 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+const isProduction = process.env.NODE_ENV === "production";
+const corsOptions = {
+  origin: isProduction ? ["http://13.50.137.242:3000"] : ["http://localhost:5173"], // Use prod IP or localhost
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

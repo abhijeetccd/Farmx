@@ -17,13 +17,6 @@ exports.create = async (req, res) => {
 exports.findAll = async (req, res) => {
   try {
     const { vendor_id, start_date, end_date, vendor_type } = req.query;
-    console.log("Query params:", {
-      vendor_id,
-      start_date,
-      end_date,
-      vendor_type,
-    });
-
     const where = {};
     const vendorWhere = {};
 
@@ -63,16 +56,13 @@ exports.findAll = async (req, res) => {
       };
     }
 
-    console.log("Final where clause:", JSON.stringify(where, null, 2));
-    console.log("Vendor where clause:", JSON.stringify(vendorWhere, null, 2));
-
     const transactions = await Transaction.findAll({
       where,
       include: [
         {
           model: Vendor,
           as: "vendor",
-          attributes: ["id", "name", "phone_no", "account_no"],
+          attributes: ["id", "name", "phone_no", "account_no", "address"],
           where: vendorWhere,
         },
         {
@@ -85,7 +75,6 @@ exports.findAll = async (req, res) => {
       order: [["date", "DESC"]],
     });
 
-    console.log(`Found ${transactions.length} transactions`);
     res.json(transactions);
   } catch (err) {
     console.error("Error in findAll:", err);

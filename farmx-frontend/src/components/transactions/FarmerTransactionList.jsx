@@ -12,6 +12,7 @@ import {
 import { Menu } from "@headlessui/react";
 import MerchantTransactionForm from "./MerchantTransactionForm";
 import FarmerTransactionPrint from "./FarmerTransactionPrint";
+import { calculateTotals } from "../../utils/transactionCalculations";
 
 const FarmerTransactionList = () => {
   const [transactions, setTransactions] = useState([]);
@@ -28,12 +29,27 @@ const FarmerTransactionList = () => {
     end_date: new Date().toISOString().split("T")[0],
   });
   const [showMerchantForm, setShowMerchantForm] = useState(false);
-  const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] =
-    useState(null);
-  const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] =
-    useState(false);
-  const [transactionToRemoveMerchant, setTransactionToRemoveMerchant] =
-    useState(null);
+  const [selectedTransactionForMerchant, setSelectedTransactionForMerchant] = useState(null);
+  const [showRemoveMerchantConfirmation, setShowRemoveMerchantConfirmation] = useState(false);
+  const [transactionToRemoveMerchant, setTransactionToRemoveMerchant] = useState(null);
+
+  // Added for village filter
+  const [cityFilter, setCityFilter] = useState("");
+
+  // Extract unique cities/localities from addresses for filter
+  const extractCity = (address) => {
+    if (!address) return "";
+    // Try to get last part after comma, or whole string if no comma
+    const parts = address.split(',').map(s => s.trim());
+    return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+  };
+  const uniqueCities = Array.from(
+    new Set(
+      transactions
+        .map((t) => extractCity(t.vendor?.address))
+        .filter(Boolean)
+    )
+  );
 
   const fetchTransactions = async () => {
     try {
@@ -62,8 +78,18 @@ const FarmerTransactionList = () => {
         .includes(searchQuery.toLowerCase()) ||
       transaction.amount?.toString().includes(searchQuery);
 
-    return matchesSearch;
+    // City filter logic
+    const matchesCity =
+      !cityFilter ||
+      (transaction.vendor?.address && extractCity(transaction.vendor.address) === cityFilter);
+
+    return matchesSearch && matchesCity;
   });
+
+  // Calculate totals for the filtered transactions
+  const totals = calculateTotals(filteredTransactions);
+
+  console.log(filteredTransactions);
 
   const handleFormClose = () => {
     setSelectedTransaction(null);
@@ -189,6 +215,20 @@ const FarmerTransactionList = () => {
               onChange={handleFilterChange}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />
+          </div>
+          {/* Village Filter Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">शहर/पत्ता</label>
+            <select
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              value={cityFilter}
+              onChange={e => setCityFilter(e.target.value)}
+            >
+              <option value="">सर्व</option>
+              {uniqueCities.map(city => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
