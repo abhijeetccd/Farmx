@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Select from "react-select";
 import { farmerService } from "../../services/farmer.service";
 import { transactionService } from "../../services/transaction.service";
 import Modal from "../common/Modal";
@@ -31,6 +32,15 @@ const FarmerTransactionForm = ({
   const [farmers, setFarmers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Farmer search state
+  const [farmerSearch, setFarmerSearch] = useState("");
+  const filteredFarmers = farmerSearch
+    ? farmers.filter(farmer =>
+        farmer.name.toLowerCase().includes(farmerSearch.toLowerCase())
+      )
+    : farmers;
+
 
   useEffect(() => {
     fetchFarmers();
@@ -179,25 +189,26 @@ const FarmerTransactionForm = ({
             />
           </div>
 
-          {/* Farmer Select */}
+          {/* Farmer Searchable Dropdown (react-select) */}
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">
               शेतकरी *
             </label>
-            <select
+            <Select
               name="vendor_id"
-              value={formData.vendor_id}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            >
-              <option value="">निवडा</option>
-              {farmers.map((farmer) => (
-                <option key={farmer.id} value={farmer.id}>
-                  {farmer.name}
-                </option>
-              ))}
-            </select>
+              placeholder="शोधा किंवा निवडा..."
+              options={farmers.map(farmer => ({ value: farmer.id, label: farmer.name }))}
+              value={farmers.find(f => f.id === formData.vendor_id) ? { value: formData.vendor_id, label: farmers.find(f => f.id === formData.vendor_id)?.name } : null}
+              onChange={option => handleInputChange({ target: { name: 'vendor_id', value: option ? option.value : '' } })}
+              isClearable
+              classNamePrefix="react-select"
+              styles={{
+                control: (base) => ({ ...base, minHeight: '44px', borderRadius: '0.5rem', borderColor: '#d1d5db', boxShadow: 'none' }),
+                menu: (base) => ({ ...base, zIndex: 100 }),
+                placeholder: (base) => ({ ...base, color: '#6b7280', fontSize: '1rem' }),
+              }}
+              noOptionsMessage={() => 'शेतकरी सापडले नाही'}
+            />
           </div>
 
           {/* Bags Input */}
