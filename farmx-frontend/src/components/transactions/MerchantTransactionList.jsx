@@ -107,10 +107,12 @@ const MerchantTransactionList = () => {
 
   useEffect(() => {
     fetchMerchants();
+    fetchCommission();
   }, []);
 
   useEffect(() => {
     fetchTransactions();
+    fetchCommission();
   }, [filters]);
 
   useEffect(() => {
