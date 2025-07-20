@@ -21,7 +21,7 @@ export const calculateTotals = (transactions) => {
   );
 
   // Calculate commission
-  totals.commission = Number((totals.weight * 0.8).toFixed(2));
+  totals.commission = Number((totals.weight * 0.7).toFixed(2));
   // Update final amount to include commission
   totals.final_total = totals.final_amount + totals.commission;
 

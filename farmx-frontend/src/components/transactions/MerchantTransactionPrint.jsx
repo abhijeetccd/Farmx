@@ -130,7 +130,7 @@ const PrintPreviewModal = ({
           <div className="font-semibold">₹{expenseTotal.toFixed(2)}</div>
 
           <div className="text-gray-600">
-            कमिशन ({totals.weight.toFixed(2)} kg × ₹0.8):
+            कमिशन ({totals.weight.toFixed(2)} kg × ₹0.7):
           </div>
           <div className="font-semibold">₹{totals.commission.toFixed(2)}</div>
 

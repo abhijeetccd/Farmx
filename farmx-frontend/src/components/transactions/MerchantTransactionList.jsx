@@ -421,7 +421,7 @@ const MerchantTransactionList = () => {
                     ₹{totals?.commission?.toFixed(2) || "0.00"}
                   </div>
                   <div className="mt-1 text-xs text-gray-500">
-                    ({totals?.weight?.toFixed(2) || "0.00"} kg × ₹0.8)
+                    ({totals?.weight?.toFixed(2) || "0.00"} kg × ₹0.7)
                   </div>
                   {filters.vendor_id && (
                     <button
